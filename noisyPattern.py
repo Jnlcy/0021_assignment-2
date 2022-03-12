@@ -20,86 +20,73 @@ class noisyPattern:
         plt.imsave('noisy_pattern.png', self.image, cmap=plt.cm.gray)
 
 # The function to consider boundary conditions
-    def _arrayDimension(self,i,j):
-        image = self.image
-        if i==0:
-            if j==0:
-                testArray = np.array([[image[i,j],image[i+1,j]],[image[i,j+1], image[i+1,j+1]]])
-            else:
-                testArray = np.array([[image[i,j-1],image[i,j],image[i,j+1]],[image[i+1,j-1],image[i+1,j],image[i+1,j+1]]])
-        elif j ==0:
-            testArray = np.array([[image[i-1,j],image[i-1,j+1]],[image[i,j],image[i,j+1]],[image[i+1,j],image[i+1,j+1]]])
-        elif i==79:
-            if j==79:
-                testArray = np.array([[image[i-1,j-1],image[i,j-1]],[image[i-1,j], image[i,j]]])
-            else:
-                testArray = np.array([[image[i-1,j-1],image[i-1,j],image[i-1,j+1]],[image[i,j-1],image[i,j],image[i,j+1]]])
-
-        elif j ==79:
-            testArray = np.array([[image[i-1,j-1],image[i-1,j]],[image[i,j-1],image[i,j]],[image[i+1,j-1],image[i+1,j]]])
-
-        else:
-            testArray = np.array([[image[i-1,j-1],image[i-1,j],image[i-1,j+1]],[image[i,j-1],image[i,j],image[i,j+1]],[image[i+1,j-1],image[i+1,j],image[i+1,j+1]]])
+    def _extendPixel(self):
+        image_new = np.full([82,82],50)
+        for i in range(1,81):
+            for j in range(1,81):
+                image_new[i,j]=self.image[i-1,j-1]
+        return image_new
         
-        return testArray
+
+    def _removeBoundary(self,image_new):
+        image_old = np.full([80,80],255)
+        for i in range(0,80):
+            for j in range(0,80):
+                image_old[i,j]=image_new[i+1,j+1]
+
+        return image_old
 
     #a function to decide whether remove the white pixel or not
-    def _removeDecision(self,i,j):
-        testArray = self._arrayDimension(i,j)
-   
+    def _removeDecision(self,i,j,image):
+       
         k=0
-        for m in range(0,testArray.shape[0]):
-            for n in range(0,testArray.shape[1]):
-                if testArray[m,n] == 0:
+        for m in [i-1,i,i+1]:
+            for n in [j-1,j,j+1]:
+                #count when the pixel is black
+                if image[m,n] == 0:
                     k+=1
-
+        #if the majority is black return true,turn the white pixel into black
         if k>=4:
             return True
         else:
             return False
 
 
-
+    #removes most noise at edges and all noise in the middle
     def removeNoise(self):
         
-        for i in range(0,self.image.shape[0]):
-            for j in range(0,self.image.shape[1]):
-                if self.image[i,j]==255:
-                    remove=self._removeDecision(i,j)
+        image=self._extendPixel()
+        for i in range(1,image.shape[0]-1):
+            for j in range(1,image.shape[1]-1):
+                if image[i,j]==255:
+                    remove=self._removeDecision(i,j,image)
                     if remove == True:
-                        self.image[i,j]=0
+                        image[i,j]=0
+        self.image = self._removeBoundary(image)
         plt.imsave('filtered.png', self.image, cmap=plt.cm.gray)
         
         #if there is a white dot, replace its value by the value
         # of the majority of neighbouring pixels
         #save the resulting image in file noise_removed.png
-    def _mean(self,i,j):
+
+    def _mean(self,i,j,image_new):
        
         sum = 0
         for m in [i-1,i,i+1]:
             for n in [j-1,j,j+1]:
 
-                sum =sum+self.image[m,n]
+                sum =sum+image_new[m,n]
         return sum/8
 
     def filter1(self):
         #replace the value of every pixel by the average of the values
         #of its neighbouring pixels
         #save the resulting image in file pattern_filter1.png
-        for i in range(1,self.image.shape[0]-1):
-            for j in range(1,self.image.shape[1]-1):
-                self.image[i,j]=self._mean(i,j)
-            
-        plt.imsave('filter1.png',self.image, cmap=plt.cm.gray)
+        image_new=self._extendPixel()
+        for i in range(1,image_new.shape[0]-1):
+            for j in range(1,image_new.shape[1]-1):
+                image_new[i,j]=self._mean(i,j,image_new)
+        image_new = self._removeBoundary(image_new)
+        plt.imsave('filter1.png',image_new, cmap=plt.cm.gray)
 
 
-def main():
-    pattern = noisyPattern()
-    pattern.setLines()
-    pattern.addNoise()
-    pattern.removeNoise()
-    pattern.filter1()
-
-
-if __name__ == "__main__":
-    main() 

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 def main():
     pattern = noisyPattern()
     pattern.setLines()
-    pattern.addnoise()
+    pattern.addNoise()
     pattern.removeNoise()
     pattern.filter1()
 
