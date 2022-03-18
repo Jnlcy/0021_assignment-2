@@ -39,10 +39,10 @@ def userOption():
 
 def filtering(df):
     option = userOption()
-    print("List of option:",option)
     new_df =df
     
     try:
+        #ask for further information for the filter
         for x in option:
             if x == 1:
                 sex = input("Enter F for Female, M for Male: ")
@@ -72,50 +72,44 @@ def filtering(df):
             
     except(ValueError,TypeError):
         new_df =[]
-
+    #return 0 when error occur
     if len(new_df) == 0:
         return len(new_df),df
+    #otherwise return length of the new data frame and the length of the data frame
     else:
         return len(new_df), new_df
     
 
 def plotting(n,df):
-    if 0< n <100:
-    
-        plt.scatter(df['Weight'],df['ID'],)
+
+    if 0< n <100:#if records found fewer thatn 100, plot scatter graph
+        plt.scatter(df['ID'],df['Weight'])
+        plt.xlabel('ID of Atheletes') 
+        plt.ylabel('Weight (kg)') 
+        plt.title(label='Scatter Plot of the Weight of Selected Atheletes',fontsize='16')
         plt.savefig("scatter.png")
         print("File scatter.png saved")
-    elif n>= 100:
+
+    elif n>= 100:#if records found equal to or more than 100, plot histogram
+
         plt.hist(df['Weight'],12)
+        plt.xlabel('Weight of the Atheletes (kg)') 
+        plt.ylabel('Number of records') 
+        plt.title(label = "Histogram of the weight of selected Atheletes", fontsize ='16')
         plt.savefig(" hist.png")
         print("File hist.png saved")
 
+    #If the number of rows is equal to 0, no plot is generated
 
 
+#The program body
 
-
-#read csv file and store it as dataframe
-df = pd.read_csv("athlete_events.csv")
+df = pd.read_csv("athlete_events.csv")#read csv file and store it as dataframe
 records, new_df =filtering(df)
 
-print("=======================================")
+print("\n=======================================")
 
 print(records ,"records")
 plotting(records,new_df)
 
 print("=======================================")
-
-   
-
-
-
-
-
-
-
-
-
-
-   
-
-

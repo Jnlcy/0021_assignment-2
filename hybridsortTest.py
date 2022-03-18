@@ -1,5 +1,5 @@
 from processArray import processArray
-import numpy as np
+
 
 #a function to get random integer from key board
 def getNumfromKeyborad():
@@ -17,7 +17,7 @@ def getNumfromKeyborad():
             print("Number of elements should be interger")
     return n
 
-
+#main function
 def main():
     n=getNumfromKeyborad()
     array = processArray(n)

@@ -63,7 +63,7 @@ class noisyPattern:
                     if remove == True:
                         image[i,j]=0
         self.image = self._removeBoundary(image)
-        plt.imsave('filtered.png', self.image, cmap=plt.cm.gray)
+        plt.imsave('noise_removed.png', self.image, cmap=plt.cm.gray)
         
         #if there is a white dot, replace its value by the value
         # of the majority of neighbouring pixels
@@ -87,6 +87,6 @@ class noisyPattern:
             for j in range(1,image_new.shape[1]-1):
                 image_new[i,j]=self._mean(i,j,image_new)
         image_new = self._removeBoundary(image_new)
-        plt.imsave('filter1.png',image_new, cmap=plt.cm.gray)
+        plt.imsave('pattern_filter1.png',image_new, cmap=plt.cm.gray)
 
 

@@ -5,7 +5,8 @@ class processArray:
         self.size=2
         self.setSize(size)
         self.numbers=np.random.random([self.size])*100
-        self.numbers=self.numbers.round(0)
+        self.numbers=self.numbers.round(0).astype(int)
+        
         
     def __str__(self):
         return "Array of "+str(self.size)+" numbers"+"\n"+str(self.numbers)
@@ -41,7 +42,7 @@ class processArray:
                 tmp = data[i]
                 data[i] = data[smallest] # swap it with element of position i
                 data[smallest] = tmp
-            print("After the ",i+1,"st iteration:")
-            print(data)
+            print("After",i+1,"iterations:\n",data ,"\n")
+            
             
 
